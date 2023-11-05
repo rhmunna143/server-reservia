@@ -1,6 +1,7 @@
 const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const cors = require('cors');
+
 const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
@@ -9,7 +10,10 @@ const port = process.env.PORT || 8050;
 
 // middlewares
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: ["http://localhost:5173", "http://localhost:8050"],
+    credentials: true
+}))
 app.use(cookieParser())
 
 
@@ -47,9 +51,25 @@ async function run() {
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         // CRUD HERE
+        const database = client.db("ReserviaDB")
+        const foodsCollection = database.collection("foods")
+        const usersCollection = database.collection("users")
+        const orderedCollection = database.collection("ordered")
 
 
-        
+        // post a food item
+
+        app.post("/add", async (req, res) => {
+            const uid = req.query.uid;
+            const data = req.body;
+
+            const result = await foodsCollection.insertOne(data)
+
+            res.status(200).send(result)
+        })
+
+
+
 
 
 
