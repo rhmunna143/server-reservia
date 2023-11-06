@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
 const app = express()
-const port = process.env.PORT || 8050;
+const port = process.env.PORT || 8070;
 
 // middlewares
 app.use(express.json())
@@ -69,6 +69,26 @@ async function run() {
         })
 
 
+        // post a user
+
+        // app.post("/user", async(req, res) => {
+        //     const user = req.body;
+
+        //     const result = await usersCollection.insertOne(user)
+
+        //     res.status(200).send(result)
+        // })
+
+        app.post("/user", async (req, res) => {
+            try {
+                const user = req.body;
+                const result = await usersCollection.insertOne(user);
+                res.status(200).send(result);
+            } catch (error) {
+                console.error("Error:", error);
+                res.status(500).send("Internal Server Error");
+            }
+        });
 
 
 
