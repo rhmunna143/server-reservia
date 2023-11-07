@@ -1,29 +1,17 @@
 const express = require('express');
+require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
-
-const cookieParser = require('cookie-parser');
-require('dotenv').config()
 
 const app = express()
 const port = process.env.PORT || 8070;
 
 // middlewares
-app.use(express.json())
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:8050"],
+    origin: ["http://localhost:5173", "http://localhost:8050", "https://reservia-server-pvafwbgug-rhmunna143.vercel.app", "reservia-server.vercel.app"],
     credentials: true
 }))
-app.use(cookieParser())
-
-
-
-
-app.get("/", (req, res) => {
-    res.send("reservia server is running...")
-})
-
-
+app.use(express.json())
 
 
 // MongoDB driver
@@ -48,7 +36,7 @@ async function run() {
         // await client.connect();
         // Send a ping to confirm a successful connection
         // await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         // CRUD HERE
         const database = client.db("ReserviaDB")
@@ -56,6 +44,11 @@ async function run() {
         const usersCollection = database.collection("users")
         const orderedCollection = database.collection("ordered")
 
+
+        // default route
+        app.get("/", (req, res) => {
+            res.send("reservia server is running...")
+        })
 
         // post a food item
 
@@ -79,27 +72,17 @@ async function run() {
 
         // get food
 
-        // app.get("/foods/:id", async (req, res) => {
-        //     const id = req?.params?.id;
-        //     const query = { _id: id };
-
-        //     const result= await foodsCollection.findOne(query);
-        //     console.log(id);
-        //     res.status(200).send(result)
-        // })
-
         app.get("/foods/:id", async (req, res) => {
             const id = req?.params?.id;
-
+            
             // Check if the id is a valid ObjectId
             if (!ObjectId.isValid(id)) {
                 return res.status(400).send("Invalid id format");
             }
 
             const query = { _id: new ObjectId(id) };
-
             const result = await foodsCollection.findOne(query);
-            console.log(id);
+
             res.status(200).send(result);
         });
 
@@ -112,16 +95,12 @@ async function run() {
                 const result = await usersCollection.insertOne(user);
                 res.status(200).send(result);
             } catch (error) {
-                console.error("Error:", error);
+
                 res.status(500).send("Internal Server Error");
             }
         });
 
-        // update user when login
-
-
-
-
+        // update user when login here
 
 
     } finally {
@@ -130,9 +109,6 @@ async function run() {
     }
 }
 run().catch(console.dir);
-
-
-
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
