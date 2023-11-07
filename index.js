@@ -64,12 +64,24 @@ async function run() {
         // post order
 
         app.post("/order", async (req, res) => {
-            const uid = req.query.uid;
-            const data = req.body;
+            const uid = req?.query?.uid;
+            const data = req?.body;
 
             const result = await orderedCollection.insertOne(data)
 
             res.send(result)
+        })
+
+        // get all orders
+
+        app.get("/api/my-ordered/foods", async (req, res) => {
+            const uid = req?.query?.uid;
+
+            const query = { buyerId: uid };
+
+            const result = await orderedCollection.find(query).toArray()
+
+            res.status(200).send(result)
         })
 
         // get foods
