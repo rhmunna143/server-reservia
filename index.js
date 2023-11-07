@@ -72,6 +72,18 @@ async function run() {
             res.send(result)
         })
 
+        // delete an order
+
+        app.delete("/api/ordered/delete", async (req, res) => {
+            const id = req?.query?.id;
+
+            const query = { _id: new ObjectId(id) };
+
+            const result = await orderedCollection.deleteOne(query)
+
+            res.status(200).send(result)
+        })
+
         // get all orders
 
         app.get("/api/my-ordered/foods", async (req, res) => {
