@@ -105,6 +105,22 @@ async function run() {
             res.status(200).send(result)
         })
 
+        // get search result foods
+
+        app.get("/api/foods/search", async(req, res) => {
+            const search = req?.query?.search;
+            const query = {
+                name: {
+                    $regex: search,
+                    $options: "i"
+                }
+            }
+
+            const result = await foodsCollection.find(query).toArray()
+
+            res.status(200).send(result)
+        })
+
         // update count and quantity of a food
 
         app.patch("/food", async (req, res) => {
