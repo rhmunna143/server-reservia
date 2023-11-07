@@ -117,6 +117,17 @@ async function run() {
             res.status(200).send(result);
         });
 
+        // get my added foods
+
+        app.get("/api/my-added/foods", async(req, res) => {
+            const uid = req?.query?.uid;
+            const query = {uid: uid};
+
+            const result = await foodsCollection.find(query).toArray()
+
+            res.status(200).send(result)
+        })
+
         // get top foods
 
         app.get("/top-foods", async (req, res) => {
