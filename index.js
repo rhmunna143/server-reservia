@@ -101,6 +101,35 @@ async function run() {
             res.status(200).send(result)
         })
 
+        // update food
+
+        app.patch("/api/food/update", async (req, res) => {
+            try {
+                const id = req?.query?.id;
+                const data = req?.body;
+
+                const query = { _id: new ObjectId(id) }
+
+                const updateData = {
+                    $set: {
+                        name: data.name,
+                        image: data.image,
+                        category: data.category,
+                        quantity: data.quantity,
+                        price: data.price,
+                        description: data.description,
+                        origin: data.origin
+                    }
+                }
+
+                const result = await foodsCollection.updateOne(query, updateData)
+
+                res.status(200).send(result)
+            } catch (err) {
+                res.status(403).send({ message: "forbidden", err })
+            }
+        })
+
         // get food
 
         app.get("/foods/:id", async (req, res) => {
@@ -119,9 +148,9 @@ async function run() {
 
         // get my added foods
 
-        app.get("/api/my-added/foods", async(req, res) => {
+        app.get("/api/my-added/foods", async (req, res) => {
             const uid = req?.query?.uid;
-            const query = {uid: uid};
+            const query = { uid: uid };
 
             const result = await foodsCollection.find(query).toArray()
 
