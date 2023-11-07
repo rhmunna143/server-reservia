@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 
 const cookieParser = require('cookie-parser');
@@ -70,12 +70,38 @@ async function run() {
 
         // get foods
 
-        app.get("/foods", async(req,  res) => {
+        app.get("/foods", async (req, res) => {
 
             const result = await foodsCollection.find().toArray()
 
             res.status(200).send(result)
         })
+
+        // get food
+
+        // app.get("/foods/:id", async (req, res) => {
+        //     const id = req?.params?.id;
+        //     const query = { _id: id };
+
+        //     const result= await foodsCollection.findOne(query);
+        //     console.log(id);
+        //     res.status(200).send(result)
+        // })
+
+        app.get("/foods/:id", async (req, res) => {
+            const id = req?.params?.id;
+
+            // Check if the id is a valid ObjectId
+            if (!ObjectId.isValid(id)) {
+                return res.status(400).send("Invalid id format");
+            }
+
+            const query = { _id: new ObjectId(id) };
+
+            const result = await foodsCollection.findOne(query);
+            console.log(id);
+            res.status(200).send(result);
+        });
 
 
         // post user
@@ -93,7 +119,7 @@ async function run() {
 
         // update user when login
 
-        
+
 
 
 
