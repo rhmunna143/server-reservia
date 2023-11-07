@@ -87,7 +87,7 @@ async function run() {
             const id = req?.query?.id;
             const data = req?.body;
 
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
 
             const updateData = {
                 $set: {
@@ -116,6 +116,19 @@ async function run() {
 
             res.status(200).send(result);
         });
+
+        // get top foods
+
+        app.get("/top-foods", async (req, res) => {
+
+            const result = await foodsCollection
+                .find({ count: { $gte: 0 } })
+                .sort({ count: -1 })
+                .limit(6)
+                .toArray();
+
+            res.status(200).send(result)
+        })
 
         // post user
 
