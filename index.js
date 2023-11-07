@@ -68,16 +68,17 @@ async function run() {
             res.status(200).send(result)
         })
 
+        // get foods
 
-        // post a user
+        app.get("/foods", async(req,  res) => {
 
-        // app.post("/user", async(req, res) => {
-        //     const user = req.body;
+            const result = await foodsCollection.find().toArray()
 
-        //     const result = await usersCollection.insertOne(user)
+            res.status(200).send(result)
+        })
 
-        //     res.status(200).send(result)
-        // })
+
+        // post user
 
         app.post("/user", async (req, res) => {
             try {
@@ -89,6 +90,10 @@ async function run() {
                 res.status(500).send("Internal Server Error");
             }
         });
+
+        // update user when login
+
+        
 
 
 
