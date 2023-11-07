@@ -61,6 +61,17 @@ async function run() {
             res.status(200).send(result)
         })
 
+        // post order
+
+        app.post("/order", async (req, res) => {
+            const uid = req.query.uid;
+            const data = req.body;
+
+            const result = await orderedCollection.insertOne(data)
+
+            res.send(result)
+        })
+
         // get foods
 
         app.get("/foods", async (req, res) => {
@@ -70,11 +81,31 @@ async function run() {
             res.status(200).send(result)
         })
 
+        // update count and quantity of a food
+
+        app.patch("/food", async (req, res) => {
+            const id = req?.query?.id;
+            const data = req?.body;
+
+            const query = {_id: new ObjectId(id)};
+
+            const updateData = {
+                $set: {
+                    count: data?.count,
+                    quantity: data?.quantity
+                }
+            }
+
+            const result = await foodsCollection.updateOne(query, updateData)
+
+            res.status(200).send(result)
+        })
+
         // get food
 
         app.get("/foods/:id", async (req, res) => {
             const id = req?.params?.id;
-            
+
             // Check if the id is a valid ObjectId
             if (!ObjectId.isValid(id)) {
                 return res.status(400).send("Invalid id format");
@@ -85,7 +116,6 @@ async function run() {
 
             res.status(200).send(result);
         });
-
 
         // post user
 
