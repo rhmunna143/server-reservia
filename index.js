@@ -91,7 +91,7 @@ async function run() {
 
         // post a food item
 
-        app.post("/add", async (req, res) => {
+        app.post("/add", verifyToken, async (req, res) => {
             const uid = req.query.uid;
             const data = req.body;
 
@@ -113,7 +113,7 @@ async function run() {
 
         // delete an order
 
-        app.delete("/api/ordered/delete", async (req, res) => {
+        app.delete("/api/ordered/delete", verifyToken, async (req, res) => {
             const id = req?.query?.id;
 
             const query = { _id: new ObjectId(id) };
@@ -182,7 +182,7 @@ async function run() {
 
         // update food
 
-        app.patch("/api/food/update", async (req, res) => {
+        app.patch("/api/food/update", verifyToken, async (req, res) => {
             try {
                 const id = req?.query?.id;
                 const data = req?.body;
