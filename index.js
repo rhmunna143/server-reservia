@@ -227,7 +227,7 @@ async function run() {
 
         // get my added foods
 
-        app.get("/api/my-added/foods", async (req, res) => {
+        app.get("/api/my-added/foods", verifyToken, async (req, res) => {
             const uid = req?.query?.uid;
             const query = { uid: uid };
 
