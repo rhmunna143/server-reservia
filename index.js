@@ -17,6 +17,25 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
+// manual middleware
+
+const verifyToken = async(req, res, next) => {
+    const token = req?.cookies?.token;
+    const uid = req?.query?.uid;
+
+    if(!token) {
+        return res.status(401).send({success: "unauthorized"})
+    }
+
+    jwt.verify(token, jwtSecret, (error, decoded) => {
+        if(error) {
+            return res.status(403).send({success: "forbidden"})
+        }
+        req.decoded = decoded;
+        next()
+    })
+}
+
 
 // MongoDB driver
 
@@ -64,8 +83,6 @@ async function run() {
                 expiresIn: "1h"
             })
 
-            console.log("token: ",token);
-
             res.status(200).cookie("token", token, {
                 httpOnly: true,
                 secure: false
@@ -108,7 +125,7 @@ async function run() {
 
         // get all orders
 
-        app.get("/api/my-ordered/foods", async (req, res) => {
+        app.get("/api/my-ordered/foods", verifyToken, async (req, res) => {
             const uid = req?.query?.uid;
 
             const query = { buyerId: uid };
