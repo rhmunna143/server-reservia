@@ -2,9 +2,12 @@ const express = require('express');
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 const app = express()
 const port = process.env.PORT || 8070;
+const jwtSecret = process.env.JWT_SECRET
 
 // middlewares
 app.use(cors({
@@ -12,6 +15,7 @@ app.use(cors({
     credentials: true
 }))
 app.use(express.json())
+app.use(cookieParser())
 
 
 // MongoDB driver
@@ -48,6 +52,24 @@ async function run() {
         // default route
         app.get("/", (req, res) => {
             res.send("reservia server is running...")
+        })
+
+        // access
+
+        app.post("/jwt", async (req, res) => {
+            const uid = req?.query?.uid;
+            const user = req?.body;
+
+            const token = jwt.sign(user, jwtSecret, {
+                expiresIn: "1h"
+            })
+
+            console.log("token: ",token);
+
+            res.status(200).cookie("token", token, {
+                httpOnly: true,
+                secure: false
+            }).send({ success: true })
         })
 
         // post a food item
@@ -107,7 +129,7 @@ async function run() {
 
         // get search result foods
 
-        app.get("/api/foods/search", async(req, res) => {
+        app.get("/api/foods/search", async (req, res) => {
             const search = req?.query?.search;
             const query = {
                 name: {
