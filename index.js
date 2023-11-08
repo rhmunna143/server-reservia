@@ -11,7 +11,7 @@ const jwtSecret = process.env.JWT_SECRET
 
 // middlewares
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:8050", "https://reservia-server-pvafwbgug-rhmunna143.vercel.app", "reservia-server.vercel.app"],
+    origin: ["https://reservia-2c6f7.web.app", "https://reservia-2c6f7.firebaseapp.com", "http://localhost:5173"],
     credentials: true
 }))
 app.use(express.json())
@@ -85,7 +85,8 @@ async function run() {
 
             res.status(200).cookie("token", token, {
                 httpOnly: true,
-                secure: false
+                secure: true,
+                sameSite: "none"
             }).send({ success: true })
         })
 
