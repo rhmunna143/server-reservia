@@ -19,17 +19,17 @@ app.use(cookieParser())
 
 // manual middleware
 
-const verifyToken = async(req, res, next) => {
+const verifyToken = async (req, res, next) => {
     const token = req?.cookies?.token;
     const uid = req?.query?.uid;
 
-    if(!token) {
-        return res.status(401).send({success: "unauthorized"})
+    if (!token) {
+        return res.status(401).send({ success: "unauthorized" })
     }
 
     jwt.verify(token, jwtSecret, (error, decoded) => {
-        if(error) {
-            return res.status(403).send({success: "forbidden"})
+        if (error) {
+            return res.status(403).send({ success: "forbidden" })
         }
         req.decoded = decoded;
         next()
@@ -138,10 +138,25 @@ async function run() {
         // get foods
 
         app.get("/foods", async (req, res) => {
+            const limit = parseInt(req.query.limit);
+            const page = parseInt(req.query.page);
 
-            const result = await foodsCollection.find().toArray()
+            const result = await foodsCollection.find()
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .toArray()
 
             res.status(200).send(result)
+        })
+
+        // get total foods LENGTH count
+
+        app.get("/api/foods-length", async (req, res) => {
+
+            const result = await foodsCollection.find().toArray()
+            const length = result?.length;
+
+            res.status(200).send({ length })
         })
 
         // get search result foods
